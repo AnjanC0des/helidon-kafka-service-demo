@@ -1,4 +1,5 @@
 helidonKafka/*
+kafka_2.13-3.9.0/*
 
 !helidonKafka
 !helidonKafka/src

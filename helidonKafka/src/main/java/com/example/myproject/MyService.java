@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 import io.helidon.config.Config;
 import io.helidon.messaging.Channel;
@@ -36,8 +36,8 @@ public class MyService implements WsListener {
 	            .subscriberConfig(KafkaConnector.configBuilder()
 	                    .bootstrapServers(kafkaServer)
 	                    .topic(topic)
-	                    .keyDeserializer(StringDeserializer.class)
-	                    .valueDeserializer(StringDeserializer.class)
+	                    .keySerializer(StringSerializer.class)
+	                    .valueSerializer(StringSerializer.class)
 	                    .build()
 	            )
 	            .build();
