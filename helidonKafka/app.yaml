@@ -1,0 +1,37 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: helidonKafka
+  labels:
+    app: helidonKafka
+spec:
+  type: ClusterIP
+  selector:
+    app: helidonKafka
+  ports:
+    - name: tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: helidonKafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helidonKafka
+  template:
+    metadata:
+      labels:
+        app: helidonKafka
+        version: v1
+    spec:
+      containers:
+      - name: helidonKafka
+        image: helidonKafka
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
