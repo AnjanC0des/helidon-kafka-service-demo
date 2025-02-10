@@ -29,9 +29,7 @@ public class MyService implements WsListener {
 		String kafkaServer = config.get("app.kafka.bootstrap.servers").asString().get();
 	    String topic = config.get("app.kafka.topic").asString().get();
 	    KafkaConnector kafkaConnector = KafkaConnector.create();
-	    Channel<String> toProcessor = Channel.create();
 
-	    Emitter<String> emitter = Emitter.create(toProcessor);
 		Channel<String> toKafka = Channel.<String>builder()
 	            .subscriberConfig(KafkaConnector.configBuilder()
 	                    .bootstrapServers(kafkaServer)
@@ -41,9 +39,10 @@ public class MyService implements WsListener {
 	                    .build()
 	            )
 	            .build();
+
+	    Emitter<String> emitter = Emitter.create(toKafka);
 		Messaging messaging = Messaging.builder()
 	            .emitter(emitter)
-	            .processor(toProcessor, toKafka, String::toUpperCase)
 	            .connector(kafkaConnector)
 	            .build()
 	            .start();
