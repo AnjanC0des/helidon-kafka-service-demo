@@ -1,0 +1,5 @@
+helidonKafka/*
+
+!helidonKafka
+!helidonKafka/src
+!helidonKafka/pom.xml
