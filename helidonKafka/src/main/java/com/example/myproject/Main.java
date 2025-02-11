@@ -14,7 +14,6 @@ import io.helidon.webserver.websocket.WsRouting;
 import io.helidon.websocket.WsSession;
 
 
-
 /**
  * The application main class.
  */
@@ -47,11 +46,12 @@ public class Main {
                 .addRouting(	
                 		WsRouting.builder()
                             .endpoint("/message",()-> new MyService()))
-                .build()
+		.build()
                 .start();
 
 
         System.out.println("WEB server is up! http://localhost:" + server.port() + "/simple-greet");
+	ConsumerService.run();
 
     }
 
