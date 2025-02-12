@@ -104,9 +104,36 @@
             <groupId>io.helidon.webserver.testing.junit5</groupId>
             <artifactId>helidon-webserver-testing-junit5</artifactId>
             <scope>test</scope>
+    </dependency>
+	    <dependency>
+            <groupId>io.confluent.parallelconsumer</groupId>
+            <artifactId>parallel-consumer-core</artifactId>
+		    <version>0.5.3.2</version>
         </dependency>
-    </dependencies>
+        <!-- end::exampleDep[] -->
+        <dependency>
+            <groupId>io.confluent.parallelconsumer</groupId>
+            <artifactId>parallel-consumer-core</artifactId>
+		    <version>0.5.3.2</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.12.0</version>
+</dependency>
 
+    </dependencies>
+<repositories>
+        <!-- tag::exampleRepo[] -->
+        <repository>
+            <name>Confluent</name>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+        <!-- end::exampleRepo[] -->
+    </repositories>
     <build>
         <plugins>
             <plugin>
