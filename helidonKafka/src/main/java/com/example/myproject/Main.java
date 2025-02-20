@@ -28,7 +28,7 @@ public class Main {
 
 
     
-    
+    public static final ConcurrentHashMap<String,String> map=new ConcurrentHashMap<>();
 //    private static final Logger log= Logger.getLogger(Main.class.getName());
 //	private static final ConcurrentHashMap<String,WsSession> sessions= new ConcurrentHashMap<>();
     public static void main(String[] args) {
@@ -45,13 +45,16 @@ public class Main {
                 .routing(Main::routing)
                 .addRouting(	
                 		WsRouting.builder()
-                            .endpoint("/message",()-> new MyService()))
+                            .endpoint("/message", new MyService(map)))
 		.build()
                 .start();
 
 
         System.out.println("WEB server is up! http://localhost:" + server.port() + "/simple-greet");
-	ConsumerService.run();
+	try{ConsumerService.run();}
+    catch(Exception e){ 
+        e.printStackTrace();}
+    finally{System.out.println("FINISHED!");}
 
     }
 

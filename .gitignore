@@ -1,5 +1,6 @@
 helidonKafka/*
 kafka_2.13-3.9.0/*
+nats/
 
 !helidonKafka
 !helidonKafka/src

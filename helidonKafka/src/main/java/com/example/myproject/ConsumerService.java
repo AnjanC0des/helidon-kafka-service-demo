@@ -19,8 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
+import java.util.concurrent.Executors;
 import static io.confluent.csid.utils.StringUtils.msg;
 import static io.confluent.parallelconsumer.ParallelConsumerOptions.ProcessingOrder.KEY;
 import static pl.tlinkowski.unij.api.UniLists.of;
@@ -35,6 +38,13 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+import io.nats.client.Connection;
+import io.nats.client.Nats;
+import io.nats.client.Dispatcher;
+
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 public class ConsumerService {
     static final String inputTopic = "messageTopic";
     //String outputTopic = "output-topic-" + RandomUtils.nextInt();
@@ -65,16 +75,59 @@ public class ConsumerService {
     static ParallelStreamProcessor<String, String> parallelConsumer;
 
     @SuppressWarnings("UnqualifiedFieldAccess")
-    static void run() {
+    static void run() throws InterruptedException{
         parallelConsumer = setupParallelConsumer();
+        String natsURL = "nats://127.0.0.1:4222";
+        Connection nc = null;
+        try{
+            nc = Nats.connect(natsURL);
+            // Dispatcher dispatcher = nc.createDispatcher((msg) -> {
+            //         System.out.printf("%s on subject %s\n",
+            //                 new String(msg.getData(), StandardCharsets.UTF_8),
+            //             msg.getSubject());
+            // });
+            // dispatcher.subscribe("messages.message");
 
-       // postSetup();
-
-        // tag::example[]
-        parallelConsumer.poll(record ->
-                System.out.println("Concurrently processing a record: "+record)
-        );
-        // end::example[]
+            // while(true){
+            //     nc.publish("messages.message","Message from consumer!!".getBytes(StandardCharsets.UTF_8));
+            //     Thread.sleep(1000);
+            // }
+            final Connection fnc=nc;
+            Thread consumerThread = new Thread(() -> {
+                parallelConsumer.poll(record -> {
+                    System.out.println("Concurrently processing a record: " + record);
+                    byte[] messageBytes = record.value().getBytes(StandardCharsets.UTF_8);
+                    try {
+                        fnc.publish("messages.1", messageBytes);
+                    } catch (Exception e) {
+                        System.out.println("TRIED PUBLISHING TO NATS BUT FAILED");
+                        e.printStackTrace();
+                    }
+                });
+            });
+    
+            consumerThread.start();
+            consumerThread.join();
+            // final Connection fnc=nc;
+            // parallelConsumer.poll(record ->{
+            //     System.out.println("Concurrently processing a record: "+record);
+            //     byte[] messageBytes= record.toString().getBytes(StandardCharsets.UTF_8);
+            //     fnc.publish("messages.message",messageBytes);
+            //     return;
+            // });
+        }catch(Exception e){
+            System.out.println("CAUGHT FROM OUTER CATCH BLOCK.");
+            e.printStackTrace();
+        }
+        finally{
+            // if (nc != null) {
+            //     try {
+            //         nc.close();
+            //     } catch (Exception e) {
+            //         e.printStackTrace();
+            //     }
+            // }
+        }
     }
 
     protected void postSetup() {
