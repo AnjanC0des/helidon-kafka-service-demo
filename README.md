@@ -1,5 +1,7 @@
-# helidon-kafka-service-demo
+# helidon-kafka-nats-demo
 
-In this demo, I will make a Helidon SE websocket microservice that reads messages through websockets and publishes them to Kafka. 
-The messages are then consumed by another service that have subscribed to Kafka.
-This demo demonstrates simple processing of events that core to many event-driven architectures.
+In this demo, a Helidon SE websocket microservice reads messages through websockets and publishes them to Kafka. 
+The messages are consumed and re-routed to the recipient using NATS.
+This setup decouples the producers/consumers and each component can scale independently. Message delivery has high throughput and durability
+with low latency and event driven architecture. 
+We can also address high number of 'groups' that would be neither convenient nor managable using Kafka topics/partitons alone.
